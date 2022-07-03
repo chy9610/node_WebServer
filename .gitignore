@@ -1,0 +1,5 @@
+
+node_modules/
+mysql-dome/node_modules/
+
+.history/
