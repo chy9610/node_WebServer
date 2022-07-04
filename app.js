@@ -25,8 +25,11 @@ const getPostData = (req) => {
         resolve({});
         return;
       }
+      console.log(postData);
+      // if (typeof postData === "string") {
+      //   resolve(JSON.parse(postData));
+      // }
       resolve(JSON.parse(postData));
-      // res.end("数据接受完毕！！")
     });
   });
 };
@@ -49,11 +52,13 @@ const serverHandler = (req, res) => {
   // 处理数据的过程
   getPostData(req).then((postData) => {
     req.body = postData;
-    
+
     // 路由
-    const blogData = handlerBlogRoute(req, res);
-    if (blogData) {
-      res.end(JSON.stringify(blogData));
+    let blogDataPromise = handlerBlogRoute(req, res);
+    if (blogDataPromise) {
+      blogDataPromise.then((blogData) => {
+        res.end(JSON.stringify(blogData));
+      });
       return;
     }
 

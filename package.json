@@ -11,5 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.18"
+  },
+  "dependencies": {
+    "@types/mysql": "^2.15.21",
+    "mysql": "^2.18.1"
   }
 }

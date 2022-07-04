@@ -14,13 +14,17 @@ const handlerBlogRoute = (req, res) => {
   if (method === "GET") {
     // 获取博客列表路由
     if (req.path === "/api/blog/list") {
-      const listData = getBlogList(author, keyWord);
-      return new SuccessModel(listData);
+      const listDataPromise = getBlogList(author, keyWord);
+      return listDataPromise.then((listData) => {
+        return new SuccessModel(listData);
+      });
     }
     // 获取博客详情路由
     if (req.path === "/api/blog/detail") {
-      const detailData = getBlogDetail(id);
-      return new SuccessModel(detailData);
+      const detailDataPromise = getBlogDetail(id);
+      return detailDataPromise.then((detailData) => {
+        return new SuccessModel(detailData);
+      });
     }
   }
 
@@ -28,28 +32,34 @@ const handlerBlogRoute = (req, res) => {
   if (method === "POST") {
     // 创建博客路由
     if (req.path === "/api/blog/new") {
-      const newBlogData = createNewBlog(blogData);
-      return new SuccessModel(newBlogData);
+      const newBlogDataPromise = createNewBlog(blogData);
+      return newBlogDataPromise.then((newBlogData) => {
+        return new SuccessModel(newBlogData);
+      });
     }
 
     // 更新博客路由
     if (req.path === "/api/blog/update") {
-      const updateBlogData = updatedBlog(id, blogData);
-      if (updateBlogData) {
-        return new SuccessModel("更新博客成功");
-      } else {
-        return new ErrorModel("更新博客失败");
-      }
+      const updateBlogDataPromise = updatedBlog(id, blogData);
+      return updateBlogDataPromise.then((updateBlogData) => {
+        if (updateBlogData) {
+          return new SuccessModel("更新博客成功");
+        } else {
+          return new ErrorModel("更新博客失败");
+        }
+      });
     }
 
     // 删除博客路由
     if (req.path === "/api/blog/delete") {
-      const deleteBlogData = deleteBlog(id);
-      if (deleteBlogData) {
-        return new SuccessModel("删除博客成功");
-      } else {
-        return new ErrorModel("删除博客失败");
-      }
+      const deleteBlogDataPromise = deleteBlog(id);
+      return deleteBlogDataPromise.then((deleteBlogData) => {
+        if (deleteBlogData) {
+          return new SuccessModel("删除博客成功");
+        } else {
+          return new ErrorModel("删除博客失败");
+        }
+      });
     }
   }
 };

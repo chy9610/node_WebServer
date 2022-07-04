@@ -10,11 +10,11 @@ const connection = mysql.createConnection({
 });
 
 // 开始连接
-connection.connect();
+// connection.connect();
 
 
 // 执行SQL语句
-const sql = `select * from blogs`;
+const sql = `update blogs set state='1' where id='1'`;
 connection.query(sql,(err, result) => {
     if(err) {
         console.error('error ##',err)
@@ -24,4 +24,4 @@ connection.query(sql,(err, result) => {
 })
 
 // 关闭连接
-connection.end();
+// connection.end();

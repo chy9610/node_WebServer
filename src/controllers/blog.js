@@ -1,63 +1,72 @@
+const { execSQL } = require("../db/mysql");
+
 // 获取博客列表
 const getBlogList = (author, keyWord) => {
-  return [
-    {
-      id: 1,
-      title: "标题1",
-      content: "内容1",
-      author: "zhangsan",
-      createdAt: 1656819215636,
-    },
-    {
-      id: 2,
-      title: "标题2",
-      content: "内容2",
-      author: "lisi",
-      createdAt: 1656819241268,
-    },
-    {
-      id: 3,
-      title: "标题3",
-      content: "内容3",
-      author: "chen",
-      createdAt: 1656819245737,
-    },
-    {
-      id: 4,
-      title: "标题4",
-      content: "内容4",
-      author: "wangwu",
-      createdAt: 1656819252335,
-    },
-  ];
+  let sql = `select * from blogs where state='1' `;
+  if (author) {
+    sql += `and author='${author}'`;
+  }
+  if (keyWord) {
+    sql += `and title like '%${keyWord}%'`;
+  }
+
+  sql += ";";
+
+  return execSQL(sql);
 };
 
 // 获取博客详情
-const getBlogDetail = (id) => {
-  return {
-    id: 1,
-    title: "标题1",
-    content: "内容1",
-    author: "zhangsan",
-    createdAt: 1656819215636,
-  };
+const getBlogDetail = (id = "") => {
+  let sql = `select * from blogs where id=${id.toString()}`;
+
+  return execSQL(sql).then((rows) => {
+    return rows[0] || {};
+  });
 };
 
 // 创建博客
 const createNewBlog = (blogData = {}) => {
-  console.log(blogData);
+  const title = blogData.title;
+  const content = blogData.content;
+  const author = blogData.author;
+
+  let sql = `
+  insert into blogs (title,content,author,create_time) values ('${title}','${content}','${author}',now())
+  ;`;
+
+  return execSQL(sql).then(res => {
+    return {
+      id: res.insertId
+    }
+  });
 };
 
 // 更新博客
 const updatedBlog = (id, blogData = {}) => {
-  console.log(blogData);
-  return true;
+  const title = blogData.title;
+  const content = blogData.content;
+  let sql = `update blogs set title='${title}', content='${content}' where id=${id};`;
+  return execSQL(sql).then(updateRes => {
+    if (updateRes.affectedRows > 0) {
+      return true;
+    }
+    return false
+  });
 };
 
-// 删除博客
+// 删除博客 
 const deleteBlog = (id) => {
-  console.log(id);
-  return true;
+  // 软删除 （逻辑删除）
+  const sql = `update blogs set state='0' where id=${id};`;
+  // 硬删除 （物理删除）
+  // const sql = `delete from blogs where id=${id};`;
+
+  return execSQL(sql).then((deleteDataRes) => {
+    if (deleteDataRes.affectedRows > 0) {
+      return true;
+    }
+    return false;
+  });
 };
 
 module.exports = {
