@@ -1,3 +1,4 @@
+const SqlString = require("sqlstring");
 const { execSQL } = require("../db/mysql");
 
 // 获取博客列表
@@ -16,9 +17,9 @@ const getBlogList = (author, keyWord) => {
 };
 
 // 获取博客详情
-const getBlogDetail = (id = "") => {
-  let sql = `select * from blogs where id=${id.toString()}`;
-
+const getBlogDetail = (id) => {
+  let sql = `select * from blogs where id=${SqlString.escape(" or 1 =1--max ")}`;
+  console.log("sql 语句", sql);
   return execSQL(sql).then((rows) => {
     return rows[0] || {};
   });
@@ -34,10 +35,10 @@ const createNewBlog = (blogData = {}) => {
   insert into blogs (title,content,author,create_time) values ('${title}','${content}','${author}',now())
   ;`;
 
-  return execSQL(sql).then(res => {
+  return execSQL(sql).then((res) => {
     return {
-      id: res.insertId
-    }
+      id: res.insertId,
+    };
   });
 };
 
@@ -46,15 +47,15 @@ const updatedBlog = (id, blogData = {}) => {
   const title = blogData.title;
   const content = blogData.content;
   let sql = `update blogs set title='${title}', content='${content}' where id=${id};`;
-  return execSQL(sql).then(updateRes => {
+  return execSQL(sql).then((updateRes) => {
     if (updateRes.affectedRows > 0) {
       return true;
     }
-    return false
+    return false;
   });
 };
 
-// 删除博客 
+// 删除博客
 const deleteBlog = (id) => {
   // 软删除 （逻辑删除）
   const sql = `update blogs set state='0' where id=${id};`;

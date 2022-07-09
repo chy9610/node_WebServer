@@ -9,7 +9,7 @@ const getPostData = (req) => {
       resolve({});
       return;
     }
-    if (req.headers["Content-Type"] === "application/json") {
+    if (req.headers["Content-Type"] !== "application/json") {
       resolve({});
       return;
     }
@@ -25,10 +25,6 @@ const getPostData = (req) => {
         resolve({});
         return;
       }
-      console.log(postData);
-      // if (typeof postData === "string") {
-      //   resolve(JSON.parse(postData));
-      // }
       resolve(JSON.parse(postData));
     });
   });
